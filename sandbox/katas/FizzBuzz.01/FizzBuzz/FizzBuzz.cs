@@ -17,10 +17,7 @@ public class FizzBuzz
         else
         {
             Console.WriteLine(number);
-
         }
-
-
     }
 
     public void CountTo(int lastNumber)
@@ -42,10 +39,6 @@ public class FizzBuzz
             bool containsFive = aktualniCisloString.Contains('5');
 
             DisplayMessage(aktualniCislo, containsThree, containsFive);
-
-
         }
-
-
     }
 }
