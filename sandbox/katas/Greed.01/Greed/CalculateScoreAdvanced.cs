@@ -19,7 +19,8 @@ namespace ScoringAdvanced
             {
                 if (counts[i] >= 3)
                 {
-                    int tripleScore = (i == 1 ? 1000 : i * 100);
+                    // tu nie je nutne mat zatvorky, ako uz nahovara analyzator
+                    int tripleScore = i == 1 ? 1000 : i * 100;
                     score += tripleScore;
 
                     if (counts[i] == 4)
