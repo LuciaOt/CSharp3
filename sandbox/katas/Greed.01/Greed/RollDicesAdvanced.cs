@@ -4,7 +4,8 @@ namespace RollingAdvanced
 {
     public class RollDicesAdvanced
     {
-        private static Random _random = new Random();
+        // objekty nejakeho class typu vieme inicializovat len jednoduchom new()
+        private static Random _random = new();
         public int[] DiceResults { get; private set; }
 
         public RollDicesAdvanced(int numberOfDice)
