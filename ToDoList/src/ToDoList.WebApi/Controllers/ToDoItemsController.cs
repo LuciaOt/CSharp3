@@ -12,34 +12,44 @@ public class ToDoItemsController : ControllerBase
     [HttpPost]
     public IActionResult Create(ToDoItemCreateRequestDto request)
     {
-        //map to Domain object as soon as possible
         var item = request.ToDomain();
 
-        //try to create an item
         try
         {
             item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
             items.Add(item);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
+
         }
 
-        //respond to client
-        return NoContent(); //201 //tato metoda z nějakého důvodu vrací status code No Content 204, zjištujeme proč ;)
+        catch (Exception ex)
+        {
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
+        }
+        return Created();
+
     }
 
     [HttpGet]
     public IActionResult Read()
     {
-        return Ok();
+        try
+        {
+            throw new Exception("Neco se pokazilo.");
+        }
+
+        catch (Exception ex)
+        {
+            return this.Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
+        }
+        return Read();
+
     }
 
     [HttpGet("{toDoItemId:int}")]
     public IActionResult ReadById(int toDoItemId)
     {
         return Ok();
+
     }
 
     [HttpPut("{toDoItemId:int}")]
