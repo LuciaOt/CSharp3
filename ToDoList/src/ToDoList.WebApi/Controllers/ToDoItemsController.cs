@@ -27,7 +27,12 @@ public class ToDoItemsController : ControllerBase
         }
         //return Ok();
         //return Ok(ToDoItemGetResponseDto.FromDomain(item));
-        return CreatedAtAction(nameof(ReadById), new { id = item.ToDoItemId }, ToDoItemGetResponseDto.FromDomain(item));
+        /*
+        Nazov parametru musi byt toDoItemId, ako je nazov parametru v ReadById. Inak ti request pada s hlaskou:
+        System.InvalidOperationException: No route matches the supplied values.
+        Item vlozi, ale nevie vytvorit cestu pre ReadById, lebo nepozna taku, kde by bol parameter /{id:int}, ale /{toDoItemId:int}
+        */
+        return CreatedAtAction(nameof(ReadById), new { toDoItemId = item.ToDoItemId }, ToDoItemGetResponseDto.FromDomain(item));
     }
 
     [HttpGet]
@@ -85,9 +90,15 @@ public class ToDoItemsController : ControllerBase
                 return NotFound();
             }
 
-            var existingItem = items[indexOfOldInstance];
-            existingItem.IsCompleted = request.IsCompleted;
-            return Ok();
+            /*
+            Tu chces updatovat cely item tym, co ti prislo v request, nielen IsCompleted
+            Malo by to byt teda nejak podobne:
+            */
+            var item = request.ToDomain();
+            item.ToDoItemId = toDoItemId; // ak by request neobsahoval to ID ale bolo by iba v ceste
+            items[indexOfOldInstance] = item;
+            // Na konci pri uspesnej aktualizacii vratit NoContent() podla zadania
+            return NoContent();
         }
         catch (Exception ex)
         {
