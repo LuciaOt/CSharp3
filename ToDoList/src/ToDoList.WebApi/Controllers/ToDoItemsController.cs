@@ -60,8 +60,7 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
 
-        //test of empty list did not passed because it only checked if itestoGet is null, but not the empty list
-        if (itemsToGet == null || itemsToGet.Count == 0) // Check if the list is null or empty
+        if (itemsToGet == null || itemsToGet.Count == 0)
         {
             return NotFound(); // 404
         }
