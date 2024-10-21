@@ -27,6 +27,7 @@ public class ToDoItemsController : ControllerBase
 
     [HttpPost]
     public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
+    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
     {
         var item = request.ToDomain();
 
@@ -64,6 +65,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpGet("{toDoItemId:int}")]
+    public ActionResult<ToDoItemGetResponseDto> ReadById(int toDoItemId)
     public ActionResult<ToDoItemGetResponseDto> ReadById(int toDoItemId)
     {
         ToDoItem? itemToGet;
