@@ -1,14 +1,14 @@
 namespace ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 
-public record ToDoItemUpdateRequestDto(int Id, string Name, string Description, bool IsCompleted)
+public record class ToDoItemUpdateRequestDto(string Name, string Description, bool IsCompleted) //int Id,
 {
     public ToDoItem ToDomain() => new()
     {
-        ToDoItemId = Id,
-        Name = Name,
-        Description = Description,
-        IsCompleted = IsCompleted
+        //ToDoItemId = Id,
+        Name = this.Name,
+        Description = this.Description,
+        IsCompleted = this.IsCompleted
     };
 
 }

@@ -5,3 +5,6 @@ public record ToDoItemGetResponseDto(int Id, string Name, string Description, bo
 {
     public static ToDoItemGetResponseDto FromDomain(ToDoItem item) => new(item.ToDoItemId, item.Name, item.Description, item.IsCompleted);
 }
+
+
+
