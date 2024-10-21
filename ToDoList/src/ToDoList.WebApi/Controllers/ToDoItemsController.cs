@@ -7,23 +7,25 @@ using ToDoList.Domain.Models;
 [Route("api/[controller]")]
 public class ToDoItemsController : ControllerBase
 {
-    public static readonly List<ToDoItem> items = new List<ToDoItem> // []; testovaci data do itemov
-    {
-        new ToDoItem
-            {
-                ToDoItemId = 1,
-                Name = "Opravit pracku",
-                Description = "Skontrolovat elektriku, objednat novu",
-                IsCompleted = false
-            },
-            new ToDoItem
-            {
-                ToDoItemId = 2,
-                Name = "Vymalovat stenu",
-                Description = "Kupit tmel a bielu farbu",
-                IsCompleted = false
-            }
-    };
+    public static readonly List<ToDoItem> items = [];
+
+    //    public static readonly List<ToDoItem> items = new List<ToDoItem> // []; testovaci data do itemov
+    //     {
+    //         new ToDoItem
+    //             {
+    //                 ToDoItemId = 1,
+    //                 Name = "Opravit pracku",
+    //                 Description = "Skontrolovat elektriku, objednat novu",
+    //                 IsCompleted = false
+    //             },
+    //             new ToDoItem
+    //             {
+    //                 ToDoItemId = 2,
+    //                 Name = "Vymalovat stenu",
+    //                 Description = "Kupit tmel a bielu farbu",
+    //                 IsCompleted = false
+    //             }
+    //     };
 
     [HttpPost]
     public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
@@ -57,10 +59,18 @@ public class ToDoItemsController : ControllerBase
         {
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
-        //respond to client
-        return (itemsToGet is null)
-            ? NotFound() //404
-            : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
+
+        //test of empty list did not passed because it only checked if itestoGet is null, but not the empty list
+        if (itemsToGet == null || itemsToGet.Count == 0) // Check if the list is null or empty
+        {
+            return NotFound(); // 404
+        }
+        return Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); // 200
+
+        //respond to client - OLD
+        // return (itemsToGet is null)
+        //     ? NotFound() //404
+        //     : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
     }
 
     [HttpGet("{toDoItemId:int}")]
