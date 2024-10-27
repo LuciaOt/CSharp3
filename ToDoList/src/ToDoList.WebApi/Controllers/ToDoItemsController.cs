@@ -2,40 +2,30 @@ namespace ToDoList.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
+using ToDoList.Persistence;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ToDoItemsController : ControllerBase
 {
-    public static readonly List<ToDoItem> items = [];
+    public readonly List<ToDoItem> items = []; //static
 
-    //    public static readonly List<ToDoItem> items = new List<ToDoItem> // []; testovaci data do itemov
-    //     {
-    //         new ToDoItem
-    //             {
-    //                 ToDoItemId = 1,
-    //                 Name = "Opravit pracku",
-    //                 Description = "Skontrolovat elektriku, objednat novu",
-    //                 IsCompleted = false
-    //             },
-    //             new ToDoItem
-    //             {
-    //                 ToDoItemId = 2,
-    //                 Name = "Vymalovat stenu",
-    //                 Description = "Kupit tmel a bielu farbu",
-    //                 IsCompleted = false
-    //             }
-    //     };
+    private readonly ToDoItemsContext context;
+    public ToDoItemsController(ToDoItemsContext context)
+    {
+        this.context = context;
+    }
 
     [HttpPost]
     public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
     {
         var item = request.ToDomain();
-
         try
         {
-            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
-            items.Add(item);
+            context.ToDoItems.Add(item);
+            context.SaveChanges();
+            // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
+            // items.Add(item);
         }
 
         catch (Exception ex)
@@ -50,36 +40,29 @@ public class ToDoItemsController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
-        List<ToDoItem> itemsToGet;
         try
         {
-            itemsToGet = items;
+            var itemsToGet = context.ToDoItems.ToList();
+
+            return (itemsToGet == null || !itemsToGet.Any())
+                ? NotFound("No items found in the database.")
+                : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain));
         }
         catch (Exception ex)
         {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
+            return Problem($"Error accessing the database: {ex.Message}", null, StatusCodes.Status500InternalServerError);
         }
-
-        if (itemsToGet == null || itemsToGet.Count == 0)
-        {
-            return NotFound(); // 404
-        }
-        return Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); // 200
-
-        //respond to client - OLD
-        // return (itemsToGet is null)
-        //     ? NotFound() //404
-        //     : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
+        // var responseItems = itemsToGet.Select(ToDoItemGetResponseDto.FromDomain);
+        // return Ok(responseItems);
     }
 
     [HttpGet("{toDoItemId:int}")]
     public ActionResult<ToDoItemGetResponseDto> ReadById(int toDoItemId)
     {
         ToDoItem? itemToGet;
-
         try
         {
-            itemToGet = items.Find(i => i.ToDoItemId == toDoItemId);
+            itemToGet = context.ToDoItems.Find(toDoItemId);
         }
         catch (Exception ex)
         {
@@ -93,18 +76,17 @@ public class ToDoItemsController : ControllerBase
     [HttpPut("{toDoItemId:int}")]
     public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
-        var updatedItem = request.ToDomain();
         try
         {
-            var itemIndexToUpdate = items.FindIndex(i => i.ToDoItemId == toDoItemId);
-
-            if (itemIndexToUpdate == -1)
+            var existingItem = context.ToDoItems.Find(toDoItemId);
+            if (existingItem == null)
             {
                 return NotFound();
             }
-
+            var updatedItem = request.ToDomain();
             updatedItem.ToDoItemId = toDoItemId;
-            items[itemIndexToUpdate] = updatedItem;
+            context.Entry(existingItem).CurrentValues.SetValues(updatedItem);
+            context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -118,12 +100,13 @@ public class ToDoItemsController : ControllerBase
     {
         try
         {
-            var itemToDelete = items.Find(i => i.ToDoItemId == toDoItemId);
+            var itemToDelete = context.ToDoItems.FirstOrDefault(i => i.ToDoItemId == toDoItemId);
             if (itemToDelete is null)
             {
                 return NotFound();
             }
-            items.Remove(itemToDelete);
+            context.ToDoItems.Remove(itemToDelete);
+            context.SaveChanges();
         }
         catch (Exception ex)
         {
