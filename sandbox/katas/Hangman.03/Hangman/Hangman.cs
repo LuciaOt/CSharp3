@@ -30,7 +30,11 @@ public class Hangman(string secretWord, int maxAttempts)
                 Console.Clear();
                 GuessedLetters[i] = letter;
                 correctGuess = true;
-                Console.Clear();
+                /*
+                Tento Console.Clear() je tam zbytocny (medzi jednotlivymi clear nic nevypisujes, takze nie je treba).
+                Celkovo by som ale Console.Clear() mozno aj dala prec, napr. pri incorrect guesses by som chcela vidiet, co som uz skusila za pismeno, aby som ho uz neskusala znova
+                */
+                //Console.Clear();
             }
         }
 
