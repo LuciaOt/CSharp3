@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi.Controllers;
 
+[Collection("Tests")]
 public class GetTests
 {
+    /*
+    V tychto testoch som musela odkomentovat/pridat volanie .Clear() na items, aby mi to preslo (po tom, ako som uz pridala vyssie [Collection]).
+    */
     [Fact]
     public void Get_AllItems_ReturnsAllItems()
     {
@@ -17,7 +21,7 @@ public class GetTests
             Description = "Test description",
             IsCompleted = false
         };
-
+        ToDoItemsController.items.Clear();
         ToDoItemsController.items.Add(toDoItem);
 
         //act
@@ -43,7 +47,7 @@ public class GetTests
     {
         //arrange
         var controller = new ToDoItemsController();
-        //ToDoItemsController.items.Clear();
+        ToDoItemsController.items.Clear();
 
         //act
         var result = controller.Read();

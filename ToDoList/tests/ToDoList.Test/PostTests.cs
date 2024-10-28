@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.WebApi.Controllers;
 
+[Collection("Tests")]
 public class PostTests
 {
     [Fact]
