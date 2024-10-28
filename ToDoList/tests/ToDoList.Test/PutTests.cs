@@ -4,6 +4,7 @@ using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi.Controllers;
 
+[Collection("Tests")]
 public class PutTests
 {
     public PutTests()
@@ -39,8 +40,9 @@ public class PutTests
         Assert.Equal(request.IsCompleted, updatedItem.IsCompleted);
     }
 
+    // Tu ti chybala tretia cast nazvu testu, a to ze co sa ma stat (vrati sa NotFound)
     [Fact]
-    public void Put_InvalidId()
+    public void Put_InvalidId_ReturnsNotFound()
     {
         // arrange
         var controller = new ToDoItemsController();
