@@ -1,11 +1,13 @@
-namespace ToDoList.Test;
+namespace ToDoList.Test.UnitTests;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using ToDoList.Domain.DTOs;
+using NSubstitute.ExceptionExtensions;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi.Controllers;
+using ToDoList.Domain.DTOs;
 
 
 public class GetUnitTests
@@ -16,61 +18,64 @@ public class GetUnitTests
 
         //arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        var controller = new ToDoItemsController(null, repositoryMock);
+        var controller = new ToDoItemsController(repositoryMock);
 
-        // var controller = new ToDoItemsController();
-        var items = new List<ToDoItem>
-        {
-                new ToDoItem { ToDoItemId = 1, Name = "Task 1", Description = "Description 1", IsCompleted = false },
-                new ToDoItem { ToDoItemId = 2, Name = "Task 2", Description = "Description 2", IsCompleted = true }
-        };
-        // var toDoItem = new ToDoItem()
-        // {
-        //     ToDoItemId = 1,
-        //     Name = "Test name",
-        //     Description = "Test description",
-        //     IsCompleted = false
-        // };
-
-        // ToDoItemsController.items.Add(toDoItem);
-        repositoryMock.ReadAll().Returns(items);
-
+        repositoryMock.ReadAll().Returns(
+                    [
+                        new ToDoItem{
+                            Name = "testName",
+                            Description = "testDescription",
+                            IsCompleted = false
+                        }
+                    ]
+                    );
 
         //act
         var result = controller.Read();
-        var value = result.GetValue();
         var resultResult = result.Result;
+        // var value = result.GetValue();
 
         //assert
         Assert.IsType<OkObjectResult>(resultResult);
-        Assert.NotNull(value);
-        // var firstItem = value.First();
-        // Assert.NotNull(value);
-        Assert.Equal(2, value.Count());
-        Assert.Equal("Task 1", value.ElementAt(0).Name);
-        Assert.Equal("Task 2", value.ElementAt(1).Name);
-
-        // Assert.Equal(toDoItem.ToDoItemId, firstItem.Id);
-        // Assert.Equal(toDoItem.Description, firstItem.Description);
-        // Assert.Equal(toDoItem.IsCompleted, firstItem.IsCompleted);
-        // Assert.Equal(toDoItem.Name, firstItem.Name);
+        repositoryMock.Received(1).ReadAll();
 
     }
 
-    // [Fact]
-    // public void Get_AllItems_ReturnsNotFound()
-    // {
-    //     //arrange
-    //     var controller = new ToDoItemsController();
-    //     //ToDoItemsController.items.Clear();
+    [Fact]
+    public void Get_ReadWhenNoItemAvailable_ReturnsNotFound()
+    {
+        // Arrange
+        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var controller = new ToDoItemsController(repositoryMock);
+        // repositoryMock.ReadAll().ReturnsNull();
+        repositoryMock.ReadAll().Returns(null as IEnumerable<ToDoItem>);
 
-    //     //act
-    //     var result = controller.Read();
-    //     var resultResult = result.Result;
+        // Act
+        var result = controller.Read();
+        var resultResult = result.Result;
 
-    //     //assert
-    //     Assert.IsType<NotFoundResult>(resultResult);
-    // }
+        // Assert
+        Assert.IsType<NotFoundObjectResult>(resultResult);
+        repositoryMock.Received(1).ReadAll();
+    }
+
+    [Fact]
+    public void Get_ReadUnhandledException_ReturnsInternalServerError()
+    {
+        // Arrange
+        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var controller = new ToDoItemsController(repositoryMock);
+        repositoryMock.ReadAll().Throws(new Exception());
+
+        // Act
+        var result = controller.Read();
+        var resultResult = result.Result;
+
+        // Assert
+        Assert.IsType<ObjectResult>(resultResult);
+        repositoryMock.Received(1).ReadAll();
+        Assert.Equivalent(new StatusCodeResult(StatusCodes.Status500InternalServerError), resultResult);
+    }
 }
 
 

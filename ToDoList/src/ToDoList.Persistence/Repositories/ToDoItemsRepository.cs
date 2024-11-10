@@ -11,24 +11,29 @@ public class ToDoItemsRepository : IRepository<ToDoItem>
         context.SaveChanges();
 
     }
-    public ToDoItem? Read(int id) => context.ToDoItems.Find(id);
-
     public IEnumerable<ToDoItem> ReadAll() => context.ToDoItems.ToList();
+    public ToDoItem? Read(int id) => context.ToDoItems.Find(id);
 
     public void Update(ToDoItem item)
     {
-        context.ToDoItems.Update(item);
+        var foundItem = context.ToDoItems.Find(item.ToDoItemId) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {item.ToDoItemId} not found.");
+        context.Entry(foundItem).CurrentValues.SetValues(item);
         context.SaveChanges();
+        // context.ToDoItems.Update(item);
+        // context.SaveChanges();
     }
 
     public void Delete(int id)
     {
-        var item = context.ToDoItems.Find(id);
-        if (item != null)
-        {
-            context.ToDoItems.Remove(item);
-            context.SaveChanges();
-        }
+        var item = context.ToDoItems.Find(id) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {id} not found.");
+        context.ToDoItems.Remove(item);
+        context.SaveChanges();
+        // var item = context.ToDoItems.Find(id);
+        // if (item != null)
+        // {
+        //     context.ToDoItems.Remove(item);
+        //     context.SaveChanges();
+        // }
     }
 }
 

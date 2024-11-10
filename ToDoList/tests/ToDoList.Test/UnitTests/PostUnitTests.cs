@@ -1,13 +1,12 @@
-namespace ToDoList.Test;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+namespace ToDoList.Test.UnitTests;
+
 using NSubstitute;
+using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
-using ToDoList.Domain.Models;
-using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi.Controllers;
-
-
+using ToDoList.Persistence.Repositories;
+using ToDoList.Domain.Models;
+using Microsoft.AspNetCore.Http;
 
 public class PostUnitTests
 {
@@ -16,7 +15,7 @@ public class PostUnitTests
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        var controller = new ToDoItemsController(null, repositoryMock); // Docasny hack, nez z controlleru odstranime context.
+        var controller = new ToDoItemsController(repositoryMock);
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
@@ -29,8 +28,10 @@ public class PostUnitTests
         var value = result.GetValue();
 
         // Assert
-        Assert.IsType<ObjectResult>(resultResult);
+        Assert.IsType<CreatedAtActionResult>(resultResult);
+        repositoryMock.Received(1).Create(Arg.Any<ToDoItem>());
         Assert.NotNull(value);
+
         Assert.Equal(request.Description, value.Description);
         Assert.Equal(request.IsCompleted, value.IsCompleted);
         Assert.Equal(request.Name, value.Name);
@@ -41,7 +42,7 @@ public class PostUnitTests
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        var controller = new ToDoItemsController(null, repositoryMock); // Docasny hack, nez z controlleru odstranime context.
+        var controller = new ToDoItemsController(repositoryMock);
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
@@ -58,32 +59,3 @@ public class PostUnitTests
         Assert.Equivalent(new StatusCodeResult(StatusCodes.Status500InternalServerError), resultResult);
     }
 }
-
-// public class PostUnitTests
-// {
-//     [Fact]
-//     public void Post_One_Item_ReturnsCreated()
-//     {
-//         //arrange
-//         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-//         var controller = new ToDoItemsController(repositoryMock);
-//         // var controller = new ToDoItemsController();
-//         var request = new ToDoItemCreateRequestDto("New Task", "Test description", false);
-//         repositoryMock.When(r => r.Create(Arg.Any<ToDoItem>())).Do(r => throw new Exception());
-
-//         //act
-//         var result = controller.Create(request);
-//         var resultResult = result.Result;
-
-//         //assert
-//         var createdResult = Assert.IsType<CreatedAtActionResult>(resultResult);
-//         Assert.NotNull(createdResult);
-//         Assert.Equal("ReadById", createdResult.ActionName);
-//     }
-// }
-
-
-
-
-
-
