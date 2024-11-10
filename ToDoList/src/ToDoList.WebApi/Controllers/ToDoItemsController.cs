@@ -11,14 +11,17 @@ public class ToDoItemsController : ControllerBase
 {
     //nahradit zavislot na db contextu repozitarom
     //public readonly List<ToDoItem> items = []; //static
-    private readonly ToDoItemsContext context;
+    // private readonly ToDoItemsContext context;
     private readonly IRepository<ToDoItem> repository;
+    // private IRepository<ToDoItem> repositoryMock;
 
-    public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)//po migracii tu bude len repository
+    public ToDoItemsController(IRepository<ToDoItem> repository)//po migracii tu bude len repository ToDoItemsContext context,
     {
-        this.context = context;
+        // this.context = context;
         this.repository = repository;
     }
+
+    // public ToDoItemsController(IRepository<ToDoItem> repositoryMock) => this.repositoryMock = repositoryMock;
 
     // public ToDoItemsController(IRepository<ToDoItem> repository)
     // {
@@ -32,8 +35,8 @@ public class ToDoItemsController : ControllerBase
         try
         {
             repository.Create(item);
-            context.ToDoItems.Add(item); //will be removed after migration
-            context.SaveChanges(); //will be removed after migration
+            // context.ToDoItems.Add(item); //will be removed after migration
+            // context.SaveChanges(); //will be removed after migration
             // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
             // items.Add(item);
         }
@@ -50,28 +53,26 @@ public class ToDoItemsController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
+        IEnumerable<ToDoItem> itemsToGet;
         try
         {
-            var items = repository.ReadAll();
-            var itemsToGet = items.ToList();
+            itemsToGet = repository.ReadAll();
+            // var items = repository.ReadAll();
+            // var itemsToGet = items.ToList();
             // var itemsToGet = context.ToDoItems.ToList();
-            if (itemsToGet.Count == 0) //will be removed
-            {
-                itemsToGet = context.ToDoItems.ToList();
-            }
-            return (itemsToGet == null || itemsToGet.Count == 0)
-                    ? NotFound("No items found in the database.")
-                    : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain));
-            // return (itemsToGet == null || itemsToGet.Count == 0)
-            //     ? NotFound("No items found in the database.")
-            //     : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain));
+            // if (itemsToGet.Count == 0) //will be removed
+            // {
+            //     itemsToGet = context.ToDoItems.ToList();
+            // }
         }
         catch (Exception ex)
         {
             return Problem($"Error accessing the database: {ex.Message}", null, StatusCodes.Status500InternalServerError);
         }
-        // var responseItems = itemsToGet.Select(ToDoItemGetResponseDto.FromDomain);
-        // return Ok(responseItems);
+
+        return (itemsToGet == null || !itemsToGet.Any())
+        ? NotFound("No items found in the database.") //400
+        : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
     }
 
     [HttpGet("{toDoItemId:int}")]
@@ -81,15 +82,16 @@ public class ToDoItemsController : ControllerBase
         try
         {
             itemToGet = repository.Read(toDoItemId);
-            if (itemToGet == null) // will be removed
-            {
-                itemToGet = context.ToDoItems.Find(toDoItemId);
-            }
+            // if (itemToGet == null) // will be removed
+            // {
+            //     itemToGet = context.ToDoItems.Find(toDoItemId);
+            // }
             // itemToGet = context.ToDoItems.Find(toDoItemId);
         }
         catch (Exception ex)
         {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
+            return Problem($"Error accessing the database: {ex.Message}", null, StatusCodes.Status500InternalServerError);
+            // return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
         }
         return (itemToGet is null)
             ? NotFound() //404
@@ -99,6 +101,8 @@ public class ToDoItemsController : ControllerBase
     [HttpPut("{toDoItemId:int}")]
     public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
+        var updatedItem = request.ToDomain();
+        updatedItem.ToDoItemId = toDoItemId;
         try
         {
             var existingItem = repository.Read(toDoItemId);
@@ -107,16 +111,15 @@ public class ToDoItemsController : ControllerBase
             {
                 return NotFound();
             }
-            var updatedItem = request.ToDomain();
-            updatedItem.ToDoItemId = toDoItemId;
-            repository.Update(updatedItem);
 
-            context.Entry(existingItem).CurrentValues.SetValues(updatedItem); //will be removed
-            context.SaveChanges(); //will be removed
+            repository.Update(updatedItem);
+            // context.Entry(existingItem).CurrentValues.SetValues(updatedItem); //will be removed
+            // context.SaveChanges(); //will be removed
         }
         catch (Exception ex)
         {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
+            return Problem($"Error accessing the database: {ex.Message}", null, StatusCodes.Status500InternalServerError);
+            // return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
         }
         return NoContent(); //204
     }
@@ -127,11 +130,10 @@ public class ToDoItemsController : ControllerBase
         try
         {
             var itemToDelete = repository.Read(toDoItemId);
-
-            if (itemToDelete == null)//will be removed
-            {
-                itemToDelete = context.ToDoItems.FirstOrDefault(i => i.ToDoItemId == toDoItemId);
-            }
+            // if (itemToDelete == null)//will be removed
+            // {
+            //     itemToDelete = context.ToDoItems.FirstOrDefault(i => i.ToDoItemId == toDoItemId);
+            // }
 
             // var itemToDelete = context.ToDoItems.FirstOrDefault(i => i.ToDoItemId == toDoItemId);
             if (itemToDelete is null)
@@ -139,13 +141,13 @@ public class ToDoItemsController : ControllerBase
                 return NotFound();
             }
             repository.Delete(toDoItemId);
-
-            context.ToDoItems.Remove(itemToDelete); //will be removed
-            context.SaveChanges();
+            // context.ToDoItems.Remove(itemToDelete); //will be removed
+            // context.SaveChanges();
         }
         catch (Exception ex)
         {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
+            return Problem($"Error accessing the database: {ex.Message}", null, StatusCodes.Status500InternalServerError);
+            // return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
         }
         return NoContent(); //204
     }
