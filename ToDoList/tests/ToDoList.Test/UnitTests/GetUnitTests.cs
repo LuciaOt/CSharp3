@@ -1,5 +1,4 @@
 namespace ToDoList.Test.UnitTests;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
@@ -7,13 +6,12 @@ using NSubstitute.ExceptionExtensions;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi.Controllers;
-using ToDoList.Domain.DTOs;
 
 
 public class GetUnitTests
 {
     [Fact]
-    public void Get_AllItems_ReturnsAllItems()
+    public void Get_ReadWhenSomeItemAvailable_ReturnsOk()
     {
 
         //arrange
