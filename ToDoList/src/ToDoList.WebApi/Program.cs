@@ -17,5 +17,7 @@ var app = builder.Build();
     app.MapControllers();
     app.UseSwagger();
     app.UseSwaggerUI(config => config.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDoList API V1"));
+    app.UseSwagger();
+    app.UseSwaggerUI(config => config.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDoList API V1"));
 }
 app.Run();

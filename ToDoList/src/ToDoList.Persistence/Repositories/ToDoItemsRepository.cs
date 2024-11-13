@@ -25,7 +25,6 @@ public class ToDoItemsRepository : IRepository<ToDoItem>
 
     public void DeleteById(int id)
     {
-        var item = context.ToDoItems.Find(id) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {id} not found.");
         context.ToDoItems.Remove(item);
         context.SaveChanges();
     }

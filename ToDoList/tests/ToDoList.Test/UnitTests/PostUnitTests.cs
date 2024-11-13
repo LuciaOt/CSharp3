@@ -11,6 +11,7 @@ public class PostUnitTests
 {
     [Fact]
     public void Post_CreateValidRequest_ReturnsCreatedAtAction()
+    public void Post_CreateValidRequest_ReturnsCreatedAtAction()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -29,6 +30,8 @@ public class PostUnitTests
         // Assert
         Assert.IsType<CreatedAtActionResult>(resultResult);
         repositoryMock.Received(1).Create(Arg.Any<ToDoItem>());
+
+        // These asserts are optional
         Assert.NotNull(value);
 
         Assert.Equal(request.Description, value.Description);
@@ -37,6 +40,7 @@ public class PostUnitTests
     }
 
     [Fact]
+    public void Post_CreateUnhandledException_ReturnsInternalServerError()
     public void Post_CreateUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
