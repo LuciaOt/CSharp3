@@ -29,10 +29,16 @@ public class DeleteByIdUnitTests
 
         //act
         var result = controller.DeleteById(testId);
-        var resultResult = result as NoContentResult;
+        /*
+        Pri viacerych testoch mas, ze pretypovavas result na nejaky typ, ale asi to nie je potreba.
+        Hned potom robis Assert.IsType a ten sam o sebe staci. Zaroven sa ti moze podarit pretypovat result na ten typ, aj ked nim nie je, a potom ti ten Assert vyjde falosne spravne.
+        odobrala som ti to nizsie, ale je potreba to este urobit pri zvysnych testoch (mas to tak aj v GetByIDUnitTests)
+        Zaroven priradzovanie do resultResult uz tiez nema zmysel a rovno mozeme testovat result.
+        result.Result potrebujes iba pri resulte, ktory vracia nejaky objekt, a to my mame len pri create.
+        */
 
         //assert
-        Assert.IsType<NoContentResult>(resultResult);
+        Assert.IsType<NoContentResult>(result);
         repositoryMock.Received(1).ReadById(testId);
         repositoryMock.Received(1).DeleteById(testId);
     }
