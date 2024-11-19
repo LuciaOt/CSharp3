@@ -5,7 +5,7 @@ using NSubstitute;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi.Controllers;
-public class DeleteByIdUnitTests
+public class DeleteUnitTests
 {
     [Fact]
     public void Delete_DeleteByIdValidItemId_ReturnsNoContent()
@@ -15,7 +15,6 @@ public class DeleteByIdUnitTests
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         var testId = 1;
-
         var sampleItem = new ToDoItem
         {
             ToDoItemId = testId,
@@ -25,16 +24,16 @@ public class DeleteByIdUnitTests
         };
 
         repositoryMock.ReadById(testId).Returns(sampleItem);
-        repositoryMock.When(r => r.DeleteById(testId)).Do(x => { /* nothing*/ });
+        repositoryMock.When(r => r.Delete(Arg.Any<ToDoItem>())).Do(x => { /* nothing*/ });
 
         //act
         var result = controller.DeleteById(testId);
-        var resultResult = result as NoContentResult;
+        // var resultResult = result as NoContentResult;
 
         //assert
-        Assert.IsType<NoContentResult>(resultResult);
+        Assert.IsType<NoContentResult>(result);
         repositoryMock.Received(1).ReadById(testId);
-        repositoryMock.Received(1).DeleteById(testId);
+        repositoryMock.Received(1).Delete(Arg.Any<ToDoItem>());
     }
 
     [Fact]
@@ -48,12 +47,11 @@ public class DeleteByIdUnitTests
 
         // Act
         var result = controller.DeleteById(testId);
-        var resultResult = result as NotFoundResult;
 
         // Assert
-        Assert.IsType<NotFoundResult>(resultResult);
+        Assert.IsType<NotFoundResult>(result);
         repositoryMock.Received(1).ReadById(testId);
-        repositoryMock.DidNotReceive().DeleteById(testId);
+        repositoryMock.DidNotReceive().Delete(Arg.Any<ToDoItem>());
     }
 
     [Fact]
@@ -71,17 +69,16 @@ public class DeleteByIdUnitTests
             IsCompleted = true
         };
         repositoryMock.ReadById(testId).Returns(sampleItem);
-        repositoryMock.When(r => r.DeleteById(testId)).Throw(new Exception("An error occurred"));
+        repositoryMock.When(r => r.Delete(Arg.Any<ToDoItem>())).Do(r => throw new Exception());
 
         // Act
         var result = controller.DeleteById(testId);
-        var resultResult = result as ObjectResult;
 
         // Assert
-        Assert.IsType<ObjectResult>(resultResult);
-        Assert.Equal(StatusCodes.Status500InternalServerError, resultResult.StatusCode);
+        Assert.IsType<ObjectResult>(result);
+        Assert.Equal(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
         repositoryMock.Received(1).ReadById(testId);
-        repositoryMock.Received(1).DeleteById(testId);
+        repositoryMock.Received(1).Delete(Arg.Any<ToDoItem>());
     }
 }
 

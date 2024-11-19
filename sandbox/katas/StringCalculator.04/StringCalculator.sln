@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8670A1CD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringCalculator.Test", "tests\StringCalculator.Test\StringCalculator.Test.csproj", "{F50BD2CE-2290-4A68-ACBB-CDE7FFA6A6E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringCalculator.04.Test", "tests\StringCalculator.04.Test\StringCalculator.04.Test.csproj", "{DAE1C81F-AB45-4D3E-A729-8AE7F8EB08BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,8 +28,13 @@ Global
 		{F50BD2CE-2290-4A68-ACBB-CDE7FFA6A6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F50BD2CE-2290-4A68-ACBB-CDE7FFA6A6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F50BD2CE-2290-4A68-ACBB-CDE7FFA6A6E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAE1C81F-AB45-4D3E-A729-8AE7F8EB08BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE1C81F-AB45-4D3E-A729-8AE7F8EB08BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE1C81F-AB45-4D3E-A729-8AE7F8EB08BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE1C81F-AB45-4D3E-A729-8AE7F8EB08BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F50BD2CE-2290-4A68-ACBB-CDE7FFA6A6E1} = {8670A1CD-D3FC-4AE3-ABFD-2959975776D5}
+		{DAE1C81F-AB45-4D3E-A729-8AE7F8EB08BE} = {8670A1CD-D3FC-4AE3-ABFD-2959975776D5}
 	EndGlobalSection
 EndGlobal

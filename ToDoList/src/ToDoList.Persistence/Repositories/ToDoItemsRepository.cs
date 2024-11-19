@@ -22,8 +22,14 @@ public class ToDoItemsRepository : IRepository<ToDoItem>
         context.SaveChanges();
     }
 
+    // public void DeleteById(ToDoItem item)
+    // {
+    //     context.ToDoItems.Remove(item);
+    //     context.SaveChanges();
+    // }
 
-    public void DeleteById(int id)
+
+    public void Delete(ToDoItem item)
     {
         context.ToDoItems.Remove(item);
         context.SaveChanges();

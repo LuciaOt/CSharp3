@@ -26,7 +26,6 @@ public class PutUnitTests
         // Act
         var result = controller.UpdateById(testId, updatedItem);
 
-
         // Assert
         result.Should().BeOfType<NotFoundResult>("the item does not exist in the repository");
         repositoryMock.Received(1).ReadById(testId);

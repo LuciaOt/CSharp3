@@ -1,0 +1,83 @@
+﻿@rendermode InteractiveServer
+<style>
+    th {
+        background-color: blueviolet;
+        color: aliceblue;
+        font-weight: bold;
+        cursor: pointer;
+
+    }
+</style>
+<h1>Dashboard</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th @onclick="SortItemsByID">ID @(idSortAscending ? "▲" : "▼")</th>
+            <th @onclick="SortItemsByName">Name @(nameSortAscending ? "▲" : "▼")</th>
+            <th>Description</th>
+            <th>IsCompleted</th>
+        </tr>
+    </thead>
+
+    @foreach (var toDoItem in toDoItems)
+    {
+        <tr>
+            <td>@toDoItem.ToDoItemId</td>
+            <td>@toDoItem.Name</td>
+            <td>@toDoItem.Description</td>
+            <td>@toDoItem.IsCompleted</td>
+        </tr>
+
+    }
+
+</table>
+
+<br>
+
+@code
+{
+    private List<ToDoItemView> toDoItems = [
+    new ToDoItemView() {ToDoItemId = 1, Description = "biele aj tmave", Name = "oprat", IsCompleted = false},
+new ToDoItemView() {ToDoItemId = 2, Description = "potraviny, drogeria", Name = "nakupit", IsCompleted = false},
+new ToDoItemView() {ToDoItemId = 3, Description = "nakupit suroviny", Name = "napiect", IsCompleted = false},
+new ToDoItemView() {ToDoItemId = 4, Description = "nezabudnut dokumenty", Name = "urad", IsCompleted = false}
+    ];
+
+    public class ToDoItemView
+    {
+
+        public int ToDoItemId { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public bool IsCompleted { get; set; }
+
+    }
+    private bool idSortAscending = true;
+    private bool nameSortAscending = true;
+    private void SortItemsByID()
+    {
+        if (idSortAscending)
+        {
+            toDoItems = toDoItems.OrderBy(item => item.ToDoItemId).ToList();
+        }
+        else
+        {
+            toDoItems = toDoItems.OrderByDescending(item => item.ToDoItemId).ToList();
+        }
+        idSortAscending = !idSortAscending;
+    }
+
+    private void SortItemsByName()
+    {
+        if (nameSortAscending)
+        {
+            toDoItems = toDoItems.OrderBy(item => item.Name).ToList();
+        }
+        else
+        {
+            toDoItems = toDoItems.OrderByDescending(item => item.Name).ToList();
+        }
+        nameSortAscending = !nameSortAscending;
+    }
+}
