@@ -7,15 +7,14 @@ using ToDoList.Domain.Models;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi.Controllers;
 
-
 public class GetUnitTests
 {
     [Fact]
-    public void Get_ReadWhenSomeItemAvailable_ReturnsOk()
+    public async Task Get_ReadWhenSomeItemAvailable_ReturnsOk()
     {
 
         //arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
 
         repositoryMock.ReadAll().Returns(
@@ -30,7 +29,7 @@ public class GetUnitTests
                     );
 
         //act
-        var result = controller.Read();
+        var result = await controller.Read();
         var resultResult = result.Result;
         // var value = result.GetValue();
 
@@ -41,16 +40,16 @@ public class GetUnitTests
     }
 
     [Fact]
-    public void Get_ReadWhenNoItemAvailable_ReturnsNotFound()
+    public async Task Get_ReadWhenNoItemAvailable_ReturnsNotFound()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         // repositoryMock.ReadAll().ReturnsNull();
-        repositoryMock.ReadAll().Returns(null as IEnumerable<ToDoItem>);
+        repositoryMock.ReadAll().Returns(Task.FromResult<IEnumerable<ToDoItem>>(null));
 
         // Act
-        var result = controller.Read();
+        var result = await controller.Read();
         var resultResult = result.Result;
 
         // Assert
@@ -59,21 +58,21 @@ public class GetUnitTests
     }
 
     [Fact]
-    public void Get_ReadUnhandledException_ReturnsInternalServerError()
+    public async Task Get_ReadUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         repositoryMock.ReadAll().Throws(new Exception());
 
         // Act
-        var result = controller.Read();
+        var result = await controller.Read();
         var resultResult = result.Result;
 
         // Assert
         Assert.IsType<ObjectResult>(resultResult);
-        repositoryMock.Received(1).ReadAll();
         Assert.Equivalent(new StatusCodeResult(StatusCodes.Status500InternalServerError), resultResult);
+        repositoryMock.Received(1).ReadAll();
     }
 }
 

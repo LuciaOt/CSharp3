@@ -9,10 +9,10 @@ using ToDoList.WebApi.Controllers;
 public class PutUnitTests
 {
     [Fact]
-    public void Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
+    public async Task Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         var testId = 1;
         var updatedItem = new ToDoItem
@@ -26,7 +26,7 @@ public class PutUnitTests
         repositoryMock.ReadById(testId).Returns((ToDoItem)null);
 
         // Act
-        var result = controller.UpdateById(testId, updatedItem);
+        var result = await controller.UpdateById(testId, updatedItem);
 
         // Assert
         result.Should().BeOfType<NotFoundResult>("the item does not exist in the repository");
@@ -35,10 +35,10 @@ public class PutUnitTests
     }
 
     [Fact]
-    public void Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
+    public async Task Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         var testId = 1;
         var existingItem = new ToDoItem
@@ -63,7 +63,7 @@ public class PutUnitTests
 
 
         // Act
-        var result = controller.UpdateById(testId, updatedItem);
+        var result = await controller.UpdateById(testId, updatedItem);
 
         // Assert
         result.Should().BeOfType<NoContentResult>();
@@ -76,10 +76,10 @@ public class PutUnitTests
     }
 
     [Fact]
-    public void Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
+    public async Task Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         var testId = 1;
         var updatedItem = new ToDoItem
@@ -96,7 +96,7 @@ public class PutUnitTests
                 .When(repo => repo.Update(Arg.Any<ToDoItem>()))
                 .Do(_ => throw new Exception("Database error"));
         // Act
-        var result = controller.UpdateById(testId, updatedItem);
+        var result = await controller.UpdateById(testId, updatedItem);
 
         // Assert
         var objectResult = result as ObjectResult;
