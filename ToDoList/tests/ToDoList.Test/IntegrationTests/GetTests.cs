@@ -20,7 +20,9 @@ public class GetTests
         {
             Name = "Jmeno",
             Description = "Popis",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "test"
+
         };
         context.ToDoItems.Add(toDoItem);
         context.SaveChanges();

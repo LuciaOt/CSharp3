@@ -23,18 +23,20 @@ public class GetByIDUnitTests
             ToDoItemId = testId,
             Name = "Sample Name",
             Description = "Sample Description",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "test"
+
         };
 
         repositoryMock.ReadById(testId).Returns(sampleItem);
 
         //act
         var result = controller.ReadById(testId);
-        // var resultResult = result.Result as OkObjectResult;
 
         //assert
-        Assert.IsType<OkObjectResult>(result);
-        Assert.NotNull(result?.Value);
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.NotNull(result.Result);
+        // Assert.NotNull(result?.Value);
         repositoryMock.Received(1).ReadById(testId);
 
     }
@@ -50,10 +52,9 @@ public class GetByIDUnitTests
 
         // Act
         var result = controller.ReadById(testId);
-        // var resultResult = result.Result as NotFoundResult;
 
         // Assert
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundResult>(result.Result);
         repositoryMock.Received(1).ReadById(testId);
     }
 
@@ -68,11 +69,10 @@ public class GetByIDUnitTests
 
         // Act
         var result = controller.ReadById(testId);
-        // var resultResult = result.Result as ObjectResult;
 
         // Assert
-        Assert.IsType<ObjectResult>(result);
-        Assert.Equivalent(new StatusCodeResult(StatusCodes.Status500InternalServerError), result);
+        Assert.IsType<ObjectResult>(result.Result);
+        Assert.Equivalent(new StatusCodeResult(StatusCodes.Status500InternalServerError), result.Result);
         repositoryMock.Received(1).ReadById(testId);
 
     }

@@ -19,7 +19,9 @@ public class PutUnitTests
         {
             Name = "Updated Name",
             Description = "Updated Description",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "test"
+
         };
         repositoryMock.ReadById(testId).Returns((ToDoItem)null);
 
@@ -44,14 +46,17 @@ public class PutUnitTests
             ToDoItemId = testId,
             Name = "Existing Item",
             Description = "This item exists.",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "test"
+
         };
         var updatedItem = new ToDoItem
         {
             ToDoItemId = testId,
             Name = "Updated Name",
             Description = "Updated Description",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "test"
         };
 
         repositoryMock.ReadById(testId).Returns(existingItem);
@@ -82,7 +87,9 @@ public class PutUnitTests
             ToDoItemId = testId,
             Name = "Updated Name",
             Description = "Updated Description",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "test"
+
         };
         repositoryMock.ReadById(testId).Returns(updatedItem);
         repositoryMock

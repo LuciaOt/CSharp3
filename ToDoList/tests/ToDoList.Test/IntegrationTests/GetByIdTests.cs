@@ -19,7 +19,9 @@ public class GetByIdTests
         {
             Name = "Jmeno",
             Description = "Popis",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "test"
+
         };
         context.ToDoItems.Add(toDoItem);
         context.SaveChanges();
@@ -51,7 +53,9 @@ public class GetByIdTests
         {
             Name = "Jmeno",
             Description = "Popis",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "test"
+
         };
         context.ToDoItems.Add(toDoItem);
         context.SaveChanges();

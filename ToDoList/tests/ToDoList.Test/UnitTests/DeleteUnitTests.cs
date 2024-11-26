@@ -20,7 +20,8 @@ public class DeleteUnitTests
             ToDoItemId = testId,
             Name = "Sample Name",
             Description = "Sample Description",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "test"
         };
 
         repositoryMock.ReadById(testId).Returns(sampleItem);
@@ -66,7 +67,9 @@ public class DeleteUnitTests
             ToDoItemId = testId,
             Name = "Sample Name",
             Description = "Sample Description",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "test"
+
         };
         repositoryMock.ReadById(testId).Returns(sampleItem);
         repositoryMock.When(r => r.Delete(Arg.Any<ToDoItem>())).Do(r => throw new Exception());

@@ -10,7 +10,7 @@ public class ToDoItemsController : ControllerBase
 {
     private readonly IRepository<ToDoItem> repository;
 
-    public ToDoItemsController(IRepository<ToDoItem> repository)//po migracii tu bude len repository ToDoItemsContext context,
+    public ToDoItemsController(IRepository<ToDoItem> repository)
     {
         // this.context = context;
         this.repository = repository;

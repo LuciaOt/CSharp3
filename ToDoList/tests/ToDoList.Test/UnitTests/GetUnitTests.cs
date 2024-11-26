@@ -23,7 +23,8 @@ public class GetUnitTests
                         new ToDoItem{
                             Name = "testName",
                             Description = "testDescription",
-                            IsCompleted = false
+                            IsCompleted = false,
+                            Category = "test"
                         }
                     ]
                     );
