@@ -1,4 +1,12 @@
 ﻿using HangMan;
+/*
+Kedze si mozem zvolit slovo, tak pravdepodobne vzdy viem tu hru vyhrat, ak som teda nezabudla, co som zadala :D
+Takze v tejto verzii ju jedine dat hrat niekomu inemu, aby hadal moje vymyslene slovo.
+
+V tomto pripade, ked hram ako uzivatel s pocitacom, by som nechala pocitac vygenerovat nejake slovo, napr. nejaky druh ovocia, zeleniny, europsky stat atd.
+Vybrat si teda s pouzitim Random z nejakeho zoznamu slovo a nechat uzivatela hadat (a samozrejme napisat mu, co ma skusit uhadnut).
+Pocet nespravnych pokusov mu mozeme nechat zadat, alebo to moze byt nejaka nami dana hranica (napr. 10)
+*/
 Console.WriteLine("Type a secret word and press Enter:");
 var inputWord = SecretWordReader.ReadSecretWord();
 Console.WriteLine("Enter the number of incorrect guesses you would like to have:");
