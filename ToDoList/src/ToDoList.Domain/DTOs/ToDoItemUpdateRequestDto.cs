@@ -8,7 +8,7 @@ public record class ToDoItemUpdateRequestDto(string Name, string Description, bo
         Name = Name,
         Description = Description,
         IsCompleted = IsCompleted,
-        Category = Category ?? "Not categorized"
+        Category = Category
     };
 
 }

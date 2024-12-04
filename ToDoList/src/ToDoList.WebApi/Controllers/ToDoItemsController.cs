@@ -70,13 +70,13 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpPut("{toDoItemId:int}")]
-    public async Task<IActionResult> UpdateById(int toDoItemId, [FromBody] ToDoItem updatedItem) //ToDoItemUpdateRequestDto request
+    public async Task<IActionResult> UpdateById(int toDoItemId, [FromBody] ToDoItem updatedItem) 
     {
         // var updatedItem = request.ToDomain();
         updatedItem.ToDoItemId = toDoItemId;
         try
         {
-            var existingItem = repository.ReadById(toDoItemId);
+            var existingItem = await repository.ReadById(toDoItemId);
             if (existingItem is null)
             {
                 return NotFound();
