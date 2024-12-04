@@ -5,10 +5,10 @@ public record class ToDoItemUpdateRequestDto(string Name, string Description, bo
     public ToDoItem ToDomain() => new()
     {
         //ToDoItemId = Id,
-        Name = this.Name,
-        Description = this.Description,
-        IsCompleted = this.IsCompleted,
-        Category = this.Category ?? "Not categorized"
+        Name = Name,
+        Description = Description,
+        IsCompleted = IsCompleted,
+        Category = Category ?? "Not categorized"
     };
 
 }

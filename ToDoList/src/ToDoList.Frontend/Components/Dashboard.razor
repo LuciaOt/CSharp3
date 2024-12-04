@@ -1,85 +1,90 @@
-@using ToDoList.Domain.Models
 @using ToDoList.Frontend.Views
 @using ToDoList.Frontend.Clients
 @inject IToDoItemsClient ToDoItemsClient
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
-<style>
-    th {
-        background-color: blueviolet;
-        color: aliceblue;
-        font-weight: bold;
-        cursor: pointer;
 
-    }
-</style>
 <h1>Dashboard</h1>
 
-
-<table>
-    <thead>
-        <tr>
-            <th @onclick="SortItemsByID">ID @(idSortAscending ? "▲" : "▼")</th>
-            <th @onclick="SortItemsByName">Name @(nameSortAscending ? "▲" : "▼")</th>
-            <th>Description</th>
-            <th>IsCompleted</th>
-            <th>Category</th>
-        </tr>
+<table class="table table-hover mt-5">
+    <thead class="table-dark">
+        <th>Id</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Completed</th>
+        <th>Actions</th>
     </thead>
 
-    @foreach (var toDoItem in toDoItems)
-    {
-        <tr>
-            <td>@toDoItem.ToDoItemId</td>
-            <td>@toDoItem.Name</td>
-            <td>@toDoItem.Description</td>
-            <td>@toDoItem.IsCompleted</td>
-            <td>@toDoItem.Category</td>
-        </tr>
-    }
+    <tbody>
+        @if (toDoItems is null)
+        {
+            <p>Reading ...</p>
+        }
 
+        @if (toDoItems is not null)
+        {
+            @foreach (var toDoItem in toDoItems)
+            {
+                <tr class="table-success">
+                    <td>@toDoItem.ToDoItemId</td>
+                    <td>@toDoItem.Name</td>
+                    <td>@toDoItem.Description</td>
+                    <td>@toDoItem.IsCompleted</td>
+                    @* <td>@toDoItem.Category</td> *@
+                    <td>
+                        <button class="btn btn-success" @onclick="() => EditItem(toDoItem)">Edit</button>
+                        <button class="btn btn-danger me-2" @onclick="async () => await DeleteItem(toDoItem)">Delete</button>
+                        <button class="btn btn-warning me-2" @onclick="() => ToggleCompletion(toDoItem)">
+                            @(toDoItem.IsCompleted ? "Mark Incomplete" : "Mark Complete")
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
 </table>
 
-
+<button class="btn btn-success" @onclick="OrderById">Seradit Podle Id</button>
+<button class="btn btn-success" @onclick="OrderByName">Seradit Podle Jmena</button>
 
 @code
 {
-    protected override void OnInitialized()
-    {
-        toDoItems = ToDoItemsClient.ReadItems();
-    }
-
-    @* protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         toDoItems = await ToDoItemsClient.ReadItemsAsync();
-    } *@
+    }
 
     private List<ToDoItemView>? toDoItems;
 
-    private bool idSortAscending = true;
-    private bool nameSortAscending = true;
-    private void SortItemsByID()
+
+    public void OrderByName()
     {
-        if (idSortAscending)
-        {
-            toDoItems = toDoItems.OrderBy(item => item.ToDoItemId).ToList();
-        }
-        else
-        {
-            toDoItems = toDoItems.OrderByDescending(item => item.ToDoItemId).ToList();
-        }
-        idSortAscending = !idSortAscending;
+        toDoItems = toDoItems?.OrderBy(item => item.Name).ToList();
     }
 
-    private void SortItemsByName()
+    public void OrderById()
     {
-        if (nameSortAscending)
-        {
-            toDoItems = toDoItems.OrderBy(item => item.Name).ToList();
-        }
-        else
-        {
-            toDoItems = toDoItems.OrderByDescending(item => item.Name).ToList();
-        }
-        nameSortAscending = !nameSortAscending;
+        toDoItems = toDoItems?.OrderBy(item => item.ToDoItemId).ToList();
+    }
+    public void EditItem(ToDoItemView toDoItem)
+    {
+        NavigationManager.NavigateTo($"editToDoItem/{toDoItem.ToDoItemId}");
+    }
+
+
+    private async Task DeleteItem(ToDoItemView toDoItem)
+    {
+        await ToDoItemsClient.DeleteItemAsync(toDoItem);
+        toDoItems = await ToDoItemsClient.ReadItemsAsync();
+    }
+
+
+
+    private async Task ToggleCompletion(ToDoItemView toDoItem)
+    {
+        toDoItem.IsCompleted = !toDoItem.IsCompleted;
+        await ToDoItemsClient.UpdateItemAsync(toDoItem);
+        toDoItems = await ToDoItemsClient.ReadItemsAsync();
     }
 }

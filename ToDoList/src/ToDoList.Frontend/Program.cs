@@ -1,5 +1,4 @@
 using ToDoList.Frontend.Clients;
-using ToDoList.Frontend.Clients;
 using ToDoList.Frontend.Components;
 
 var builder = WebApplication.CreateBuilder(args);

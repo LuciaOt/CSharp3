@@ -3,15 +3,15 @@ h1:focus {
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+    outline: 1px solid #b02699;
 }
 
 .invalid {
-    outline: 1px solid #e50000;
+    outline: 1px solid #e5a000;
 }
 
 .validation-message {
-    color: #e50000;
+    color: #4100e5;
 }
 
 .blazor-error-boundary {
