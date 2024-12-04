@@ -1,13 +1,10 @@
 namespace ToDoList.Persistence.Repositories;
-
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain.Models;
 public class ToDoItemsRepository : IRepositoryAsync<ToDoItem>
 {
     private readonly ToDoItemsContext context;
-
     public ToDoItemsRepository(ToDoItemsContext context) => this.context = context;
-
     public async Task Create(ToDoItem item)
     {
         await context.ToDoItems.AddAsync(item);
@@ -22,7 +19,8 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem>
     public async Task Update(ToDoItem item)
     {
         var foundItem = context.ToDoItems.Find(item.ToDoItemId) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {item.ToDoItemId} not found.");
-        context.Entry(item).CurrentValues.SetValues(item);
+        // context.Entry(item).CurrentValues.SetValues(item);
+        context.Entry(foundItem).CurrentValues.SetValues(item);
         await context.SaveChangesAsync();
     }
 
